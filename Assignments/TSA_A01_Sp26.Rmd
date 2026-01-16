@@ -1,0 +1,35 @@
+---
+title: "ENV 797 - Time Series Analysis for Energy and Environment Applications | Spring 2026"
+subtitle: "Assignment 1 - Due date 01/15/26"
+author: "Luana"
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+## Directions
+
+Before making any edits to this file, please rename it such that it includes your first and last name (e.g., "LuanaLima_TSA_A01_Sp26.Rmd")
+
+Once you have this renamed file open in RStudio, the first thing you will do is replace "author:" on line 3 with your name. 
+Then you will start working through the assignment by  **creating code and output** that answer each question. Be sure to use this assignment document. Your report should contain the answer to each question and any plots/tables you obtained (when applicable).
+
+When you have completed the assignment, **Knit** the text and code into a single PDF file.  Submit this pdf using Canvas. 
+
+## Questions
+
+Q1. What are your previous experiences with time series analysis, R, and Git? 
+
+> Answer: None
+
+
+Q2. For this part we just want to see the path to your R project. No need to do anything. The output will be automatically generated once you knit you file. 
+
+> Answer: This is my working directory:
+
+```{r}
+getwd()
+```
+
+Q3. Copy and paste the link to your forked repository on Github. It should looks like this: "https://github.com/lmmlima/TSA_Sp26"
+
+> Answer: 
