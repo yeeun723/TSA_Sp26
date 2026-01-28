@@ -1,0 +1,33 @@
+---
+title: "Importing Data Sets"
+author: "Luana Lima"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Importing data directly from Web
+
+```{r}
+library(readxl)
+
+url <- "https://www.eia.gov/totalenergy/data/browser/xls.php?tbl=T10.01&freq=m"
+
+#Creating a temporary file to be imported to R
+tmp <- tempfile(fileext = ".xlsx")
+
+#downloading data from url and storing in the temporary file
+download.file(url, tmp, mode = "wb")
+
+#reading and storing data into a data frame
+energy_data1 <- read_excel(tmp,skip = 12, col_names=FALSE) 
+
+#Now reading only the column names from row 11
+read_col_names <- read_excel(tmp,skip = 10,n_max = 1, col_names=FALSE) 
+
+#Assigning the column names to the data set
+colnames(energy_data1) <- read_col_names
+
+
+```
+

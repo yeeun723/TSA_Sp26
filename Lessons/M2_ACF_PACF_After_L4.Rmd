@@ -60,7 +60,7 @@ nhydro <- ncol(raw_inflow_data)-2
 nobs <- nrow(raw_inflow_data) 
 
 #If your file does not have header like this one you can add column names after creating the data frame
-colnames(raw_inflow_data)=c("Month","Year", "HP1", "HP2","HP3")
+colnames(raw_inflow_data)=c("Month","Year", "HP1", "HP2","HP3","HP4")
 
 #Checking data
 head(raw_inflow_data)
@@ -88,7 +88,8 @@ A plot of observed values over time is the first thing you do to start understan
 
 ```{r}
 #using package ggplot2
-ggplot()
+ggplot(inflow_data, aes(x=my_date,y=HP1))+
+  geom_line()
 
 #adding two time series to the same plot
 
@@ -102,9 +103,7 @@ In this course we will also use *autoplot()* which is a ggplot() for time series
 Many of the functions we will use require a time series object. You can transform your data in a time series using the function *ts()*. Only the columns with reservoir inflow data should be transformed, not the ones with month and year. Your ts object is not a data frame, but like I said we will need it as a ts for some function we will explore in future scripts.
 
 ```{r}
-ts_inflow_data <- ts(inflow_data[,2:5],start = c(1931,1), frequency = 12) 
-#Because the data is a monthly data, we don't put date.
-#Also, the frequency is 12 because it is a monthly data.
+ts_inflow_data <- ts(inflow_data[,2:5],start=c(1931,1),frequency=12)
 ts_inflow_data
 
 ```
@@ -112,7 +111,6 @@ ts_inflow_data
 Note that ts_inflow_data has information on start, end and frequency. We will discuss frequency in future lectures, for now let's just keep the default value for frequency which is 1.
 
 Let's see the plots generated with *autoplot()*.
-autoplot knows I want to play with time series data, and automatically considers x as date. 
 
 ```{r}
 
@@ -121,8 +119,8 @@ autoplot(ts_inflow_data) +
   ylab("Inflow") +
   labs(color="Reservoir")
 
-autoplot(ts_inflow_data[,1], series="HP1") +
-  autolayer(ts_inflow_data[,2], series="HP2")
+autoplot(ts_inflow_data[,1],series="HP1") +
+  autolayer(ts_inflow_data[,2],series="HP2")+
   xlab("Time") +
   ylab("Inflow") +
   labs(color="Reservoir")
@@ -136,17 +134,16 @@ There are multiple ways to get acf and pacf plots in R. The default package "sta
 
 ```{r acf}
 # Option 1: The function acf() and pacf() is from package "stats"
-HP1_acf= acf(ts_inflow_data[,1], lag.max = 40, plot = TRUE)
+HP1_acf = acf(ts_inflow_data[,1],lag.max=60,plot=TRUE)
 
-HP1_pacf= pacf(ts_inflow_data[,1], lag.max = 40, plot = TRUE)
+HP1_pacf= pacf(ts_inflow_data[,1],lag.max=60,plot=TRUE)
 
 #Option 2: Computing ACF and PACF with package "forecast"
 
 #The next line will output a plot since we have plot=TRUE and also store the acf values in the object
-HP1_acf= Acf(ts_inflow_data[,4], lag.max = 60)
-# This is less confusing because we know the lag 0 = 1 (?)
+HP1_acf= Acf(ts_inflow_data[,4],lag.max = 60)
 
-HP1_pacf= Pacf(ts_inflow_data[,4], lag.max = 60, plot = TRUE)
+HP1_pacf= Pacf(ts_inflow_data[,4],lag.max=60,plot=TRUE)
   
 ```
 
