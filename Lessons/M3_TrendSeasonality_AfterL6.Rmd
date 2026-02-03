@@ -142,7 +142,7 @@ Let's identify and remove trend component. You start by fitting a linear model t
 t <- c(1:nobs)
 
 #Choose one HP 
-iHP <- 4
+iHP <- 3
 
 #Fit a linear trend to TS of iHP
 linear_trend_model <- lm(inflow_data[,iHP+1]~t)
@@ -192,8 +192,23 @@ Now let's shift attention to the seasonal component.
 
 ```{r}
 #Use seasonal means model
+dummies <- seasonaldummy(ts_detrend_inflow)
 
+seas_means_model <- lm(detrend_inflow_data~dummies)
+summary(seas_means_model)
 
+#store coeff
+beta_int <- seas_means_model$coefficients[1]
+beta_coff <- seas_means_model$coefficients[2:12]
+
+#compute the seasonal components
+season_inflow_data <- array(0,nobs)
+for(i in 1:nobs){
+season_inflow_data <- beta_int + beta_coff %>% dummies[i,]
+}
+
+#remove seasonal component from series
+deseason_inflow_data <- detrend_inflow_data - season_inflow_data
 ```
 
 ##Exercise
