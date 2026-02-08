@@ -1,7 +1,7 @@
 ---
 title: "ENV 797 - Time Series Analysis for Energy and Environment Applications | Spring 2026"
 subtitle: "Assignment 4 - Due date 02/10/26"
-author: "Student Name"
+author: "Yeeun Kim"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
