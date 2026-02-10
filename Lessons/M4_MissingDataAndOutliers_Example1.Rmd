@@ -65,7 +65,7 @@ tsclean() from package 'forecast' identify and replace outliers and missing valu
 
 ```{r}
 
-clean_wind_data <- tsclean(ts_wind_data)  #object should be a time series
+clean_wind_data <- tsclean(ts_wind_data)  #object should be a time series. It uses local means. I don't need to detrend.
 
 autoplot(clean_wind_data, series="Wind Clean") +
   autolayer(ts_wind_data, series="Wind Raw") +

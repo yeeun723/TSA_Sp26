@@ -201,7 +201,7 @@ print(grubbs_test) #look at the p-value to find the decision
 chi_test <- chisq.out.test(df_inflow_random$inflow)
 print(chi_test)
 
-#both test confirm highest observation (4020.22) is an outiliwer 
+#both test confirm highest observation (4020.22) is an outilier 
 
 #If you need to remove outlier use rm.outlier()
 df_inflow_random$inflow <- rm.outlier(df_inflow_random$inflow,fill=TRUE) #using fill equal true the value will be replaced by mean or median 
@@ -221,7 +221,7 @@ Note we still seem to have some outliers. You can repeat the process until the n
 
 If you want to take of all outliers and missing data at once you may use function `tsclean()` from package `forecast`. This function will identify and replace outliers and missing values in a time series. Just be careful when using this function because it will remove all extreme values without any consideration!
 
-
+if you use tsclean(), it replaces outliers to the local mean (local or neighboring mean?)
 ```{r}
 ts_inflow_random <- ts(inflow_random,frequency=12,start=c(1931,1))
 
@@ -237,6 +237,8 @@ autoplot(ts_inflow_random,series="Random")+
 ## Optional: Advanced coding
 
 If you want to create your own loop to remove outlier so that you have more control over the replacement/removal of outliers process, you may use the code below. Note I use a `loop while` that keeps checking if the most extreme value is an outlier until p-value is greater than 0.05. 
+
+how to create a loop
 
 ```{r}
 summary(df_inflow_random$inflow)
