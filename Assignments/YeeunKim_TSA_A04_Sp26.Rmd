@@ -22,7 +22,14 @@ R packages needed for this assignment: "xlsx" or "readxl", "ggplot2", "forecast"
 
 ```{r message=FALSE, warning=FALSE}
 #Load/install required package here
-
+library(forecast)
+library(tseries)
+library(Kendall)
+library(dplyr)
+library(readxl)
+library(openxlsx)
+library(ggplot2)
+library(xlsx)
 ```
 
 ## Questions 
@@ -31,8 +38,25 @@ Consider the same data you used for A3 from the spreadsheet "Table_10.1_Renewabl
 
 ```{r message=FALSE, warning=FALSE}
 #Importing data set - you may copy your code from A3
+#Importing data
+energy_data1 <- read_excel(path="/Users/yeeunkim/Library/CloudStorage/OneDrive-DukeUniversity/2026 Spring/ENVIRON 797 Time Series Analysis/TSA_Sp26//Data/Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx",skip = 12, sheet="Monthly Data",col_names=FALSE) 
 
+# Extract the column names from row 11
+read_col_names <- read_excel(path="/Users/yeeunkim/Library/CloudStorage/OneDrive-DukeUniversity/2026 Spring/ENVIRON 797 Time Series Analysis/TSA_Sp26//Data/Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx",skip = 10,n_max = 1, sheet="Monthly Data",col_names=FALSE) 
 
+#Assign the column names to the data set
+colnames(energy_data1) <- read_col_names
+
+#Visualize the first rows of the data set
+head(energy_data1)
+
+#Select the columns
+energy_select <- energy_data1 %>% 
+  select(1,5)
+head(energy_select)
+
+#TS data
+ts_energy_data <- ts(energy_select[,2],start = c(1973,1), frequency = 12) 
 ```
 
 
@@ -47,10 +71,21 @@ Difference the "Total Renewable Energy Production" series using function diff().
 * *lag* integer indicating with lag to use;
 * *differences* integer indicating how many times series should be differenced.
 
-Try differencing at lag 1 only once, i.e., make `lag=1` and `differences=1`. Plot the differenced series. Do the series still seem to have trend?
+Try differencing at lag 1 only once, i.e., make `lag=1` and `differences=1`. Plot the differenced series. Do the series still seem to have trend?  
+
+> Answer: Although the differenced series fluctuate upward at certain periods, it does not show an increasing trend, as it oscillates around a constant mean around zero.
 
 ```{r}
+# Differencing
+diff_renew <- diff(ts_energy_data, lag=1, differences=1)
 
+# Making a plot
+autoplot(diff_renew) +
+  labs(
+    title = "Total Renewable Energy Production Change",
+    x = "Time",
+    y = "Renewable Energy Production",
+    color = NULL) 
 ```
 
 
@@ -58,7 +93,25 @@ Try differencing at lag 1 only once, i.e., make `lag=1` and `differences=1`. Plo
 Copy and paste part of your code for A3 where you run the regression for Total Renewable Energy Production and subtract that from the original series. This should be the code for Q3 and Q4. make sure you use assign same name for the time series object that you had in A3, otherwise the code will not work.
 
 ```{r}
+#Create vector t
+t <- 1:length(ts_energy_data[,1])
 
+#Renewable_Linear model
+renew_linear_model <- lm(ts_energy_data[,1]~t)  
+summary(renew_linear_model)
+
+#Renewable_Store regression coefficients
+beta0=as.numeric(renew_linear_model$coefficients[1])  #first coefficient is the intercept term or beta0
+beta1=as.numeric(renew_linear_model$coefficients[2])  #second coefficient is the slope or beta1
+
+#Renewable: remove the trend from series
+renew_detrend_data <- energy_select[,2]-(beta0+beta1*t) 
+
+#Renewable: note detrend will be a data frame and not a ts object
+class(renew_detrend_data)
+
+#Renewable: Transfer into ts object
+ts_renew_detrend_data <- ts(renew_detrend_data,frequency=12,start=c(1973,1))
 ```
 
 ### Q3
@@ -69,10 +122,22 @@ Using autoplot() + autolayer() create a plot that shows the three series togethe
 What can you tell from this plot? Which method seems to have been more efficient in removing the trend?
 
 ```{r}
+ts_diff_renew <- ts(diff_renew, start = c(1973,2), frequency = 12) #It starts from february due to the differencing.
 
+# Plots for three time series
+autoplot(ts_energy_data[,1], series = "Original") +
+  autolayer(ts_diff_renew, series = "Differenced") +
+  autolayer(ts_renew_detrend_data, series = "Detrended") +
+  labs(
+    title = "Total Renewable Energy Production",
+    x = "Time",
+    y = "Renewable Energy Production",
+    color = "Series"
+  ) +
+  theme_minimal
 ```
 
-> Answer: 
+> Answer: From the plot, I think differencing is more efficient in removing the trend. The original series shows a strong upward trend, and the detrended series still shows residual long-term structure. However, the differenced series fluctuates around zero.
 
 ### Q4
 Plot the ACF for the three series and compare the plots. Add the argument `ylim=c(-0.5,1)` to the autoplot() or Acf() function - whichever you are using to generate the plots - to make sure all three y axis have the same limits. Looking at the ACF which method do you think was more efficient in eliminating the trend? The linear regression or differencing?
