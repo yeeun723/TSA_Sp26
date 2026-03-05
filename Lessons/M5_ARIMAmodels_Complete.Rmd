@@ -313,7 +313,7 @@ How do you choose the best model?
 
 ## Automatically fitting ARIMA
 
-Now that you have played with different order, let's try the auto.arima() function from the base package *stats*. The best fit for this time series is a ARIMA(0,1,2) with drift.
+Now that you have played with different order, let's try the auto.arima() function from the base package *stats*. The best fit for this time series is a ARIMA(1,1,2) with drift.
 
 ```{r}
 
