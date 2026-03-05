@@ -98,6 +98,8 @@ par(mfrow=c(1,1))
 
 The plots from the previous section show the data has a seasonal component. Since we are working with non-seasonal ARIMA, we need to decompose the series and eliminate the seasonality.
 
+Class Note: This is a bad model.
+
 ```{r}
 #Using R decompose function
 decompose_allsectors_price <- decompose(ts_electricity_price[,"All.sectors"],"additive")
@@ -129,17 +131,23 @@ These three function take a few main arguments:
 
 ```{r}
 #Model 1: Arithmetic mean on original data
-
+Mean_seas <- meanf(ts_electricity_price[,"All.sectors"],h=36)
+plot(Mean_seas) # This is a rlly bad model.
 
 #Model 2: Arithmetic mean on deseas data
-
+# Since we still have a trend, this won't be a good model either.
+Mean_deseas <- meanf(deseasonal_allsectors_price,h=36)
+plot(Mean_deseas)
 
 #Model 3: Seasonal naive on original data
-
+Naive_seas <- snaive(ts_electricity_price[,"All.sectors"],h=36)
+plot(Naive_seas)
+# Got better, but still need to model further.
 
 #Model 4: Naive on deseas data
-
-
+Naive_deseas <- naive(deseasonal_allsectors_price,h=36)
+plot(Naive_deseas)
+# can't project the trend
 ```
 
 
@@ -170,16 +178,19 @@ We will try these models on the original dataset and the deaseason electricity p
 
 ```{r}
 # Model 5: Simple moving average on deseasonal data
-
+SMA_deseas <- sma(deseasonal_allsectors_price, h=36)
+plot(SMA_deseas)
 
 # Model 6: Simple moving average on original data
-
+# not good due to seasonality
 
 # Model 7:  Simple exponential smoothing on deseasonal data
-
+# not great
 
 # Model 8:  Simple exponential smoothing on original data
+# also not great
 
+# what we learned is naive and moving average are not goos approaches. So we could you the ARIMA model.
 
 
 
