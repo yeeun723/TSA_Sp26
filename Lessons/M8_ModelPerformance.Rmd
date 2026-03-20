@@ -122,6 +122,7 @@ On "M7_Intro_Forecasting.Rmd" we tried several models for both seasonal and dese
 
 ```{r}
 MEAN_seas <- meanf(y = ts_electricity_price[,"All.sectors"], h = 12)
+summary(MEAN_seas)
 checkresiduals(MEAN_seas)
 ```
 
@@ -131,14 +132,18 @@ checkresiduals(MEAN_seas)
 
 ```{r}
 SNAIVE_seas <- snaive(ts_electricity_price[,"All.sectors"], h=12)
+summary(SNAIVE_seas)
 checkresiduals(SNAIVE_seas)
 ```
 
-> Comments: The residuals for the seasonal naive don't show any seasonal patterns. Recall the model repeats the observation that happen in a previous seasonal lag (in this case one year ago). The residuals series show a strong autoregressive component which is not desired.
+> Comments: The residuals for the seasonal naive don't show any seasonal patterns. Recall the model repeats the observation that happen in a previous seasonal lag (in this case one year ago). The residuals series show a strong autoregressive component which is not desired.  
+
+> Class notes: we don't see the seasonality anymore, but there is still autocorrelation.
 
 ### Model 3: SARIMA
 ```{r}
 SARIMA_autofit <- auto.arima(ts_electricity_price[,"All.sectors"])
+summary(SARIMA_autofit)
 checkresiduals(SARIMA_autofit)
 ```
 
